@@ -27,19 +27,31 @@ function updateDisplay() {
     $("#milliseconds").text(pad(duration.ms, 2));
 }
 
+let animateCircleInterval;
+
+function animateCircle() {
+    var c = document.querySelector(".animateCircle");
+    var percentage = 100 - ((new Date() - startTime) / 1000);
+    if (percentage >= 100) {
+        clearInterval(animateCircleInterval);
+        return;
+    }
+    c.setAttribute("stroke-dasharray", 520 * percentage + " 520");
+}
+
 function playFunc() {
     if (running) return;
     running = true;
     startTime = new Date();
     updateDisplay();
-    animateCircle();
+    animateCircleInterval = setInterval(animateCircle, 10);
 }
 
 function stopFunc() {
     if (!running) return;
     running = false;
     endTime = new Date();
-    clearInterval(animateCircle);
+    clearInterval(animateCircleInterval);
 }
 
 function resetFunc() {
@@ -50,16 +62,4 @@ function resetFunc() {
     duration.s = 0;
     duration.ms = 0;
     updateDisplay();
-}
-
-function animateCircle() {
-    var c = document.querySelector(".animateCircle");
-    var animate = setInterval(function() {
-        var percentage = 100 - ((endTime - startTime) / 1000);
-        if (percentage >= 100) {
-            clearInterval(animate);
-            return;
-        }
-        c.setAttribute("stroke-dasharray", 520 * percentage + " 520");
-    }, 10);
 }
