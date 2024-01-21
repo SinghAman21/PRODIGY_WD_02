@@ -1,5 +1,5 @@
 * {
-    margin: 0; 
+    margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
@@ -66,21 +66,8 @@ p {
     transition: all ease 0.1s;
 }
 
-#stop {
-    padding: 15px 20px;
-    border-radius: 50px;
-    color: #fff;
-    font-weight: 400;
-    background: linear-gradient(45deg, #8ffcf0, #635bfc);
-    box-shadow: all ease 0.1s;
-}
-
-#play:active, #reset:active, #stop:active {
+#play:active, #reset:active {
     transform: scale(0.95);
-}
-
-#stop .fa {
-    margin-right: 5px;
 }
 
 #fa-play {
@@ -98,7 +85,7 @@ p {
 
 /* Circle Animation */
 #timer svg {
-    position:absolute;
+    position: absolute;
     left: 0;
 }
 

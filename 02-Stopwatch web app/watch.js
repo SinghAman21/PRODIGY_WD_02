@@ -1,65 +1,66 @@
-var startTime, endTime, running, duration = {
-    h: 0,
-    m: 0,
-    s: 0,
-    ms: 0
-};
+$(document).ready(function () {
+    let running = false;
+    let startTime, elapsedTime = 0, interval, animateCircleInterval;
+    let duration = {
+        h: 0,
+        m: 0,
+        s: 0,
+        ms: 0
+    };
 
-function pad(num, size) {
-    var s = "0000" + num;
-    return s.substr(s.length - size);
-}
-
-function updateDisplay() {
-    var currentTime = new Date();
-    duration.ms = currentTime - startTime;
-    duration.s = Math.floor(duration.ms / 1000);
-    duration.m = Math.floor(duration.s / 60);
-    duration.h = Math.floor(duration.m / 60);
-    duration.ms %= 1000;
-    duration.s %= 60;
-    duration.m %= 60;
-    duration.h %= 60;
-
-    $("#hours").text(pad(duration.h, 2));
-    $("#minutes").text(pad(duration.m, 2));
-    $("#seconds").text(pad(duration.s, 2));
-    $("#milliseconds").text(pad(duration.ms, 2));
-}
-
-let animateCircleInterval;
-
-function animateCircle() {
-    var c = document.querySelector(".animateCircle");
-    var percentage = 100 - ((new Date() - startTime) / 1000);
-    if (percentage >= 100) {
-        clearInterval(animateCircleInterval);
-        return;
+    function pad(num, size) {
+        var s = "0000" + num;
+        return s.substr(s.length - size);
     }
-    c.setAttribute("stroke-dasharray", 520 * percentage + " 520");
-}
 
-function playFunc() {
-    if (running) return;
-    running = true;
-    startTime = new Date();
-    updateDisplay();
-    animateCircleInterval = setInterval(animateCircle, 10);
-}
+    function updateDisplay() {
+        duration.h = Math.floor(elapsedTime / 3600000);
+        duration.m = Math.floor((elapsedTime % 3600000) / 60000);
+        duration.s = Math.floor((elapsedTime % 60000) / 1000);
+        duration.ms = elapsedTime % 1000;
 
-function stopFunc() {
-    if (!running) return;
-    running = false;
-    endTime = new Date();
-    clearInterval(animateCircleInterval);
-}
+        $("#hours").text(pad(duration.h, 2));
+        $("#minutes").text(pad(duration.m, 2));
+        $("#seconds").text(pad(duration.s, 2));
+        $("#milliseconds").text(pad(duration.ms, 3));
+    }
 
-function resetFunc() {
-    if (running) return;
-    startTime = new Date();
-    duration.h = 0;
-    duration.m = 0;
-    duration.s = 0;
-    duration.ms = 0;
-    updateDisplay();
-}
+    function animateCircle() {
+       // add colour if needed
+    }
+
+    function startTimer() {
+        startTime = new Date();
+        interval = setInterval(function () {
+            var currentTime = new Date();
+            elapsedTime += currentTime - startTime;
+            startTime = currentTime;
+            updateDisplay();
+            animateCircle();
+        }, 10);
+    }
+
+    function stopTimer() {
+        clearInterval(interval);
+    }
+
+    window.playPauseFunc = function () {
+        if (running) {
+            stopTimer();
+        } else {
+            startTimer();
+        }
+        running = !running;
+    };
+
+    window.resetFunc = function () {
+        if (running) {
+            stopTimer();
+            running = false;
+        }
+        startTime = null;
+        elapsedTime = 0;
+        updateDisplay();
+        animateCircle();
+    };
+});
